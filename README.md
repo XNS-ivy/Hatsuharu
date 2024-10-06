@@ -1,2 +1,2 @@
 # Hatsuharu
-Whatsapp Bot Typescript
+Whatsapp Bot
