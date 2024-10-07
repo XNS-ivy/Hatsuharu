@@ -10,6 +10,7 @@ async function hatsuWASocket() {
         auth: state,
         emitOwnEvents: false,
         logger: pino({ level: "silent" }),
+        browser: ["Hatsuharu", "Chrome", "1.0.0"],
     };
     const hatsu = await hatsuharu(socketConfig);
     hatsu.ev.on("creds.update", saveCreds);
@@ -18,14 +19,15 @@ async function hatsuWASocket() {
         if (!m.messages[0] || msg.pushName == undefined) return;
         // console.log(msg);
         const bodyMsg = msgProcess(msg);
+        // console.log(bodyMsg);
         if (bodyMsg.hitPrefix == false) {
             styleLogging(bodyMsg, "log");
         } else {
             const selectMenu = global.config.infoMenu.includes(bodyMsg.command) ? "info" :
-            global.config.memberMenu.includes(bodyMsg.command) ? "regular" :
-            global.config.premiumMenu.includes(bodyMsg.command) ? "premium" : 
-            global.config.adminMenu.includes(bodyMsg.command) ? "admin" : undefined;
-            if(selectMenu) styleLogging(bodyMsg, "query");
+                global.config.memberMenu.includes(bodyMsg.command) ? "regular" :
+                    global.config.premiumMenu.includes(bodyMsg.command) ? "premium" :
+                        global.config.adminMenu.includes(bodyMsg.command) ? "admin" : undefined;
+            if (selectMenu) styleLogging(bodyMsg, "query");
         }
     });
     hatsu.ev.on("connection.update", async (update) => {
@@ -50,7 +52,9 @@ async function hatsuWASocket() {
                 }, 5000);
             }
         } else if (connStatus === "connection open" || connStatus === "connecting to user") {
-            console.log(connStatus);
+            console.log(`\t\t${global.textProp}
+                ${connStatus}
+                ${global.textProp}\n`);
         }
     });
 }

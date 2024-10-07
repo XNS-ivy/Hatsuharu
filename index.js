@@ -1,17 +1,21 @@
 const { hatsuWASocket } = require("./libs/wa");
 const { loadConfig } = require("./libs/utils");
 const now = new Date();
-const time = [
+const day = [
     now.getDate(),
     now.getMonth() + 1,
     now.getFullYear(),
-    now.getHours(),
-    now.getMinutes()
 ];
+const time = [
+    now.getHours(),
+    now.getMinutes(),
+    now.getSeconds(),
+];
+const combineDate = day.join("-")+" "+time.join(":");
 
 global.botConfig = "./config/config.json";
-global.date = time.join(":");
-
+global.date = combineDate;
+global.textProp = "----- >>>>> -----";
 async function startApp() {
     try {
         await loadConfig();

@@ -12,7 +12,7 @@ function msgProcess(msg) {
     const getPhonenumber = msg.key.participant == undefined ? msg.key.remoteJid.split("@")[0] : msg.key.participant.split("@")[0];
     const isHitPrevix = getTextMsg.startsWith(global.config.prefix) ? true : false;
     const textOrCommand = getTextMsg.startsWith(global.config.prefix) ? getTextMsg.split(global.config.prefix)[1] : getTextMsg;
-    const isDissapear = getObjectMsg === "extendedTextMessage" ? true : false;
+    const isDissapear = getObjectMsg === "extendedTextMessage" ? 604800 : false;
     const isOnGroup = msg.key.participant == undefined ? false : true;
     const [command, ...args] = textOrCommand.split(/\s+/);
     const argument = args.join(" ");
@@ -37,7 +37,7 @@ function styleLogging(bodyMsg, select) {
             P.NUMBER \t: ${bodyMsg.phoneNumber}
             ON GROUP \t: ${bodyMsg.isOnGroup}
             DATE \t: ${global.date}
-            TYPE MESSAGE : ${bodyMsg.typeMesage}
+            MSG TYPE \t: ${bodyMsg.typeMesage}
             MESSAGE \t: ${bodyMsg.message}
             \t--- >>>>>>>>>>> ---\n`);
     }else if(select == "query"){
