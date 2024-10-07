@@ -1,7 +1,7 @@
 const { default: hatsuharu, useMultiFileAuthState } = require("@whiskeysockets/baileys");
 const pino = require("pino");
 const fs = require("fs");
-const { msgProcess } = require("./waFunction")
+const { msgProcess, styleLogging } = require("./waFunction")
 
 async function hatsuWASocket() {
     const { state, saveCreds } = await useMultiFileAuthState("session");
@@ -13,17 +13,27 @@ async function hatsuWASocket() {
     };
     const hatsu = await hatsuharu(socketConfig);
     hatsu.ev.on("creds.update", saveCreds);
-    hatsu.ev.on("messages.upsert",async (m) => {
+    hatsu.ev.on("messages.upsert", async (m) => {
         const msg = m.messages[0];
         if (!m.messages[0] || msg.pushName == undefined) return;
-        console.log(msg);
-        const isCommand = msgProcess(msg);
-        isCommand;
-    
+        // console.log(msg);
+        const bodyMsg = msgProcess(msg);
+        if (bodyMsg.hitPrefix == false) {
+            styleLogging(bodyMsg, "log");
+        } else {
+            const selectMenu = global.config.infoMenu.includes(bodyMsg.command) ? "info" :
+            global.config.memberMenu.includes(bodyMsg.command) ? "regular" :
+            global.config.premiumMenu.includes(bodyMsg.command) ? "premium" : 
+            global.config.adminMenu.includes(bodyMsg.command) ? "admin" : undefined;
+            if(selectMenu) styleLogging(bodyMsg, "query");
+        }
     });
     hatsu.ev.on("connection.update", async (update) => {
         const { connection, lastDisconnect } = update;
-        const connStatus = connection === "close" ? "close" : connection === "open" ? "connection open" : connection === "connecting" ? "connecting to user" : "";
+        const connStatus = connection === "close" ? "close" :
+            connection === "open" ? "connection open" :
+                connection === "connecting" ? "connecting to user" : "";
+
         if (connStatus === "close") {
             const disconnectReason = lastDisconnect?.error?.output?.payload?.error;
             if (disconnectReason === "Unauthorized") {

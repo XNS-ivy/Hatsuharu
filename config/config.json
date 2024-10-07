@@ -1,0 +1,9 @@
+{
+    "botName": "Hatsuharu",
+    "version": "1.0.0",
+    "infoMenu": ["info","help"],
+    "memberMenu": [],
+    "premiumMenu": [],
+    "adminMenu": [],
+    "prefix": "$"
+}
