@@ -1,6 +1,7 @@
 const { default: hatsuharu, useMultiFileAuthState } = require("@whiskeysockets/baileys");
 const pino = require("pino");
 const fs = require("fs");
+const { msgProcess } = require("./waFunction")
 
 async function hatsuWASocket() {
     const { state, saveCreds } = await useMultiFileAuthState("session");
@@ -11,12 +12,15 @@ async function hatsuWASocket() {
         logger: pino({ level: "silent" }),
     };
     const hatsu = await hatsuharu(socketConfig);
-    hatsu.ev.on("creds.update", saveCreds);    
-    hatsu.ev.on("messages.upsert", (m) =>{
+    hatsu.ev.on("creds.update", saveCreds);
+    hatsu.ev.on("messages.upsert",async (m) => {
         const msg = m.messages[0];
-        if(!msg || msg.pushName == undefined) return;
+        if (!m.messages[0] || msg.pushName == undefined) return;
         console.log(msg);
-    })
+        const isCommand = msgProcess(msg);
+        isCommand;
+    
+    });
     hatsu.ev.on("connection.update", async (update) => {
         const { connection, lastDisconnect } = update;
         const connStatus = connection === "close" ? "close" : connection === "open" ? "connection open" : connection === "connecting" ? "connecting to user" : "";
