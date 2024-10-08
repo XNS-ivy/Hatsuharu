@@ -1,3 +1,5 @@
+const reply = require("./replyData.json");
+
 function msgProcess(msg) {
     const getObjectMsg = Object.keys(msg.message)[0] == "senderKeyDistributionMessage" ? Object.keys(msg.message)[2] :
         Object.keys(msg.message)[0];
@@ -51,5 +53,37 @@ function styleLogging(bodyMsg, select) {
             \t--- >>>>>>>>>> ---\n`);
     }
 }
-
-module.exports = { msgProcess, styleLogging }
+async function initialQuery(query, args){
+    let text;
+    let media;
+    let audio;
+    switch (query) {
+        case global.config.infoMenu[0]:
+            text = reply.info;
+            break;
+        default:
+            text = undefined;
+            media = undefined;
+            audio = undefined;
+            break;
+    }
+    const content = {
+        text: text,
+        contextInfo: {
+            externalAdReply: {
+                title: "Hatsuharu bot",
+                body: 'Hatsu desu >-<',
+                thumbnailUrl: "../src/image/banner.jpg",
+                sourceUrl: "",
+                mediaType: 1,
+                renderLargerThumbnail: true,
+            }
+        }
+    };
+    return {
+        text: content,
+        urlMedia: media,
+        urlAudio: audio,
+    }
+}
+module.exports = { msgProcess, styleLogging, initialQuery }

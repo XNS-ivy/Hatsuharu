@@ -1,7 +1,7 @@
 const { default: hatsuharu, useMultiFileAuthState } = require("@whiskeysockets/baileys");
 const pino = require("pino");
 const fs = require("fs");
-const { msgProcess, styleLogging } = require("./waFunction")
+const { msgProcess, styleLogging, initialQuery } = require("./waFunction")
 
 async function hatsuWASocket() {
     const { state, saveCreds } = await useMultiFileAuthState("session");
@@ -11,6 +11,7 @@ async function hatsuWASocket() {
         emitOwnEvents: false,
         logger: pino({ level: "silent" }),
         browser: ["Hatsuharu", "Chrome", "1.0.0"],
+        generateHighQualityLinkPreview: true,
     };
     const hatsu = await hatsuharu(socketConfig);
     hatsu.ev.on("creds.update", saveCreds);
@@ -23,11 +24,22 @@ async function hatsuWASocket() {
         if (bodyMsg.hitPrefix == false) {
             styleLogging(bodyMsg, "log");
         } else {
+            const query = bodyMsg.command;
+            const args = bodyMsg.argument;
+
             const selectMenu = global.config.infoMenu.includes(bodyMsg.command) ? "info" :
                 global.config.memberMenu.includes(bodyMsg.command) ? "regular" :
                     global.config.premiumMenu.includes(bodyMsg.command) ? "premium" :
                         global.config.adminMenu.includes(bodyMsg.command) ? "admin" : undefined;
-            if (selectMenu) styleLogging(bodyMsg, "query");
+            if (selectMenu){
+                styleLogging(bodyMsg, "query");
+                const executeQuery = await initialQuery(query, args);
+                if(executeQuery.urlAudio == undefined && executeQuery.urlMedia == undefined && executeQuery.text !== undefined){
+                    await hatsu.sendMessage(bodyMsg.idNumber, executeQuery.text, {quoted : msg, ephemeralExpiration: bodyMsg.isDissapearChat});
+                }
+            }
+            else {
+            }
         }
     });
     hatsu.ev.on("connection.update", async (update) => {
