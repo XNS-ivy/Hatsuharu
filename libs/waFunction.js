@@ -67,21 +67,8 @@ async function initialQuery(query, args){
             audio = undefined;
             break;
     }
-    const content = {
-        text: text,
-        contextInfo: {
-            externalAdReply: {
-                title: "Hatsuharu bot",
-                body: 'Hatsu desu >-<',
-                thumbnailUrl: "../src/image/banner.jpg",
-                sourceUrl: "",
-                mediaType: 1,
-                renderLargerThumbnail: true,
-            }
-        }
-    };
     return {
-        text: content,
+        text: text,
         urlMedia: media,
         urlAudio: audio,
     }

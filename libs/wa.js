@@ -34,8 +34,25 @@ async function hatsuWASocket() {
             if (selectMenu){
                 styleLogging(bodyMsg, "query");
                 const executeQuery = await initialQuery(query, args);
+                const Image = "https://raw.githubusercontent.com/XNS-ivy/Hatsuharu/refs/heads/main/src/image/profile.jpg";
+                const content = {
+                    text: executeQuery.text,
+                    contextInfo: {
+                        externalAdReply: {
+                            showAdAttribution: false,
+                            renderLargerThumbnail: true,
+                            title: `Title`,
+                            body: `Description`,
+                            previewType: 2, 
+                            mediaType: 1,
+                            thumbnailUrl: Image,
+                            mediaUrl: `https://github.com`, 
+                            sourceUrl: `https://github.com`,
+                        },
+                    }
+                };
                 if(executeQuery.urlAudio == undefined && executeQuery.urlMedia == undefined && executeQuery.text !== undefined){
-                    await hatsu.sendMessage(bodyMsg.idNumber, executeQuery.text, {quoted : msg, ephemeralExpiration: bodyMsg.isDissapearChat});
+                    await hatsu.sendMessage(bodyMsg.idNumber, content, {quoted : msg, ephemeralExpiration: bodyMsg.isDissapearChat});
                 }
             }
             else {
