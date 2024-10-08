@@ -25,4 +25,6 @@ async function startApp() {
     }
 }
 
-startApp();
+startApp().catch((err) =>{
+    console.error(err);
+});
