@@ -34,7 +34,7 @@ async function hatsuWASocket() {
             if (selectMenu){
                 styleLogging(bodyMsg, "query");
                 const executeQuery = await initialQuery(query, args);
-                const Image = "https://raw.githubusercontent.com/XNS-ivy/Hatsuharu/refs/heads/main/src/image/profile.jpg";
+                const Image = "https://raw.githubusercontent.com/XNS-ivy/Hatsuharu/488421104ed9f12428052c052393ac226954e721/src/image/profile.jpg";
                 const content = {
                     text: executeQuery.text,
                     contextInfo: {
