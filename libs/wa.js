@@ -1,4 +1,4 @@
-const { default: hatsuharu, useMultiFileAuthState } = require("@whiskeysockets/baileys");
+const { default: hatsuharu, useMultiFileAuthState, Mimetype } = require("@whiskeysockets/baileys");
 const pino = require("pino");
 const fs = require("fs");
 const { msgProcess, styleLogging, initialQuery } = require("./waFunction")
@@ -19,7 +19,8 @@ async function hatsuWASocket() {
         const msg = m.messages[0];
         if (!m.messages[0] || msg.pushName == undefined) return;
         // console.log(msg);
-        const bodyMsg = msgProcess(msg);
+        const bodyMsg = await msgProcess(msg);
+        if (bodyMsg == undefined) return;
         // console.log(bodyMsg);
         if (bodyMsg.hitPrefix == false) {
             styleLogging(bodyMsg, "log");
@@ -30,15 +31,24 @@ async function hatsuWASocket() {
             const selectMenu = global.config.infoMenu.includes(bodyMsg.command) ? "info" :
                 global.config.memberMenu.includes(bodyMsg.command) ? "regular" :
                     global.config.premiumMenu.includes(bodyMsg.command) ? "premium" :
-                        global.config.adminMenu.includes(bodyMsg.command) ? "admin" : undefined;
+                        global.config.adminMenu.includes(bodyMsg.command) ? "admin" :
+                            global.config.interactMenu.includes(bodyMsg.command) ? "interact" : undefined;
+
             if (selectMenu) {
                 styleLogging(bodyMsg, "query");
-                const executeQuery = await initialQuery(query, args);
+                const executeQuery = await initialQuery(query, args, bodyMsg.phoneNumber, bodyMsg.name);
                 if (executeQuery.urlAudio == undefined && executeQuery.urlMedia == undefined && executeQuery.text !== undefined) {
-                    await hatsu.sendMessage(bodyMsg.idNumber, executeQuery.text, { quoted: msg, ephemeralExpiration: bodyMsg.isDissapearChat });
+                    await hatsu.sendMessage(bodyMsg.idNumber, executeQuery.text, { quoted: msg, ephemeralExpiration: bodyMsg.isDissapearChat }).catch((err) => {
+                        console.error(err);
+                    });
+                } else if (executeQuery.urlAudio && executeQuery.urlMedia == undefined && executeQuery.text == undefined) {
+                    await hatsu.sendMessage(bodyMsg.idNumber, { audio: { url: executeQuery.urlAudio }, mimetype: "audio/mp4", ptt: true}, { quoted: msg, ephemeralExpiration: bodyMsg.isDissapearChat}).catch((err) => {
+                        console.error(err);
+                    });
                 }
             }
             else {
+                console.log("error execute query :", bodyMsg.command, bodyMsg.argument, selectMenu);
             }
         }
     });

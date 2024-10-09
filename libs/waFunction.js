@@ -1,6 +1,9 @@
 const reply = require("./replyData.json");
+const fs = require("fs");
+const axios = require("axios");
 
 function msgProcess(msg) {
+    // if(Object.keys(msg.message)[0] == undefined || Object.keys(msg.message)[2] == undefined) return undefined;
     const getObjectMsg = Object.keys(msg.message)[0] == "senderKeyDistributionMessage" ? Object.keys(msg.message)[2] :
         Object.keys(msg.message)[0];
 
@@ -54,19 +57,30 @@ function styleLogging(bodyMsg, select) {
             \t--- >>>>>>>>>> ---\n`);
     }
 }
-async function initialQuery(query, args) {
-    let text;
-    let media;
-    let audio;
+async function initialQuery(query, args, id, name) {
+    let text = undefined;
+    let media = undefined;
+    let audio = undefined;
     switch (query) {
         case global.config.infoMenu[0]:
             if (args) break;
             text = reply.info;
             break;
+        case global.config.interactMenu[0]:
+        case global.config.interactMenu[1]:
+        case global.config.interactMenu[2]:
+            if (args) break;
+            const index = query == global.config.interactMenu[0] ? "./src/audio/hatsu.ogg" :
+                query == global.config.interactMenu[1] ? "./src/audio/detail.ogg" : "./src/audio/talk.ogg";
+            audio = index;
+            break;
+        case "sfw":
+            if (!args) break;
+                const getRandomAnime = await fetchWaifuData(query, args);
+                text = getRandomAnime.text;
+                media = getRandomAnime.url;
+            break;
         default:
-            text = undefined;
-            media = undefined;
-            audio = undefined;
             break;
     }
     if (text !== undefined) {
@@ -94,4 +108,25 @@ async function initialQuery(query, args) {
         urlAudio: audio,
     }
 }
+async function fetchWaifuData(type, category) {
+    try {
+      // Mengatur URL berdasarkan tipe dan kategori
+      const url = `https://api.waifu.pics/${type}/${category}`;
+      
+      // Mengambil data dari API menggunakan axios
+      const response = await axios.get(url);
+      
+      // Menampilkan hasilnya
+      console.log('Response Data:', response.data);
+      
+      // Mengembalikan data
+      return {
+        url: response.data,
+        text: ">-<",
+    };
+    } catch (error) {
+      // Menangani error jika ada masalah saat pengambilan data
+      console.error('Error fetching data:', error);
+    }
+  }
 module.exports = { msgProcess, styleLogging, initialQuery }

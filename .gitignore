@@ -132,3 +132,5 @@ dist
 # Session does`t need to saved
 session/
 
+# Tested .js file
+test.js
