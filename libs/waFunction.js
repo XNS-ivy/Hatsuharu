@@ -111,7 +111,7 @@ async function initialQuery(query, args, id, name) {
                 },
             }
         };
-    } else if (media == undefined) {
+    } else if (media == undefined && text !== undefined) {
         text = { text: text };
     }
     return {
