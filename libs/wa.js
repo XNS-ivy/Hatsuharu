@@ -1,7 +1,8 @@
 const { default: hatsuharu, useMultiFileAuthState, Mimetype } = require("@whiskeysockets/baileys");
 const pino = require("pino");
 const fs = require("fs");
-const { msgProcess, styleLogging, initialQuery } = require("./waFunction")
+const { msgProcess, styleLogging, initialQuery } = require("./waFunction");
+const { url } = require("inspector");
 
 async function hatsuWASocket() {
     const { state, saveCreds } = await useMultiFileAuthState("session");
@@ -42,7 +43,11 @@ async function hatsuWASocket() {
                         console.error(err);
                     });
                 } else if (executeQuery.urlAudio && executeQuery.urlMedia == undefined && executeQuery.text == undefined) {
-                    await hatsu.sendMessage(bodyMsg.idNumber, { audio: { url: executeQuery.urlAudio }, mimetype: "audio/mp4", ptt: true}, { quoted: msg, ephemeralExpiration: bodyMsg.isDissapearChat}).catch((err) => {
+                    await hatsu.sendMessage(bodyMsg.idNumber, { audio: { url: executeQuery.urlAudio }, mimetype: "audio/mp4", ptt: true }, { quoted: msg, ephemeralExpiration: bodyMsg.isDissapearChat }).catch((err) => {
+                        console.error(err);
+                    });
+                } else if (executeQuery.urlAudio == undefined && executeQuery.urlMedia && executeQuery.text) {
+                    await hatsu.sendMessage(bodyMsg.idNumber, { image: { url: executeQuery.urlMedia }, caption: executeQuery.text }, { quoted: msg, ephemeralExpiration: bodyMsg.isDissapearChat }).catch((err) => {
                         console.error(err);
                     });
                 }

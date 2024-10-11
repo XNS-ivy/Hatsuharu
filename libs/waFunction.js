@@ -61,6 +61,9 @@ async function initialQuery(query, args, id, name) {
     let text = undefined;
     let media = undefined;
     let audio = undefined;
+    let picture = false;
+    let requireBanner = true;
+
     switch (query) {
         case global.config.infoMenu[0]:
             if (args) break;
@@ -74,16 +77,23 @@ async function initialQuery(query, args, id, name) {
                 query == global.config.interactMenu[1] ? "./src/audio/detail.ogg" : "./src/audio/talk.ogg";
             audio = index;
             break;
-        case "sfw":
-            if (!args) break;
-                const getRandomAnime = await fetchWaifuData(query, args);
-                text = getRandomAnime.text;
-                media = getRandomAnime.url;
+        case global.config.memberMenu[0]:
+        case global.config.memberMenu[1]:
+            if (!args) {
+                text = `Command wrong try: ${global.config.prefix}${global.config.memberMenu[0]} neko`;
+                requireBanner = false;
+                break;
+            }
+            const getRandomAnime = await fetchWaifuData(query, args);
+            media = getRandomAnime.url;
+            text = getRandomAnime.text;
+            picture = true;
+            requireBanner = false;
             break;
         default:
             break;
     }
-    if (text !== undefined) {
+    if (text !== undefined && requireBanner == true) {
         const Image = "https://raw.githubusercontent.com/XNS-ivy/Hatsuharu/refs/heads/main/src/image/profile.jpg";
         text = {
             text: text,
@@ -101,32 +111,29 @@ async function initialQuery(query, args, id, name) {
                 },
             }
         };
+    } else if (media == undefined) {
+        text = { text: text };
     }
     return {
         text: text,
         urlMedia: media,
         urlAudio: audio,
+        isPicture: picture,
     }
 }
 async function fetchWaifuData(type, category) {
     try {
-      // Mengatur URL berdasarkan tipe dan kategori
-      const url = `https://api.waifu.pics/${type}/${category}`;
-      
-      // Mengambil data dari API menggunakan axios
-      const response = await axios.get(url);
-      
-      // Menampilkan hasilnya
-      console.log('Response Data:', response.data);
-      
-      // Mengembalikan data
-      return {
-        url: response.data,
-        text: ">-<",
-    };
+        const url = `https://api.waifu.pics/${type}/${category}`;
+        const response = await axios.get(url);
+        return {
+            url: response.data.url,
+            text: ">-<",
+        };
     } catch (error) {
-      // Menangani error jika ada masalah saat pengambilan data
-      console.error('Error fetching data:', error);
+        console.log(error);
+        return {
+            text: "Category not found"
+        }
     }
-  }
+}
 module.exports = { msgProcess, styleLogging, initialQuery }

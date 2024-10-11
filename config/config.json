@@ -1,10 +1,21 @@
 {
     "botName": "Hatsuharu",
     "version": "1.0.0",
-    "infoMenu": ["info","help","menu"],
-    "memberMenu": [],
+    "infoMenu": [
+        "info",
+        "help",
+        "menu"
+    ],
+    "memberMenu": [
+        "sfw",
+        "neko"
+    ],
     "premiumMenu": [],
     "adminMenu": [],
-    "interactMenu": ["hatsu", "detail","talk"],
+    "interactMenu": [
+        "hatsu",
+        "detail",
+        "talk"
+    ],
     "prefix": "$"
 }
