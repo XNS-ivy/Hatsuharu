@@ -1,6 +1,6 @@
 const fs = require("fs").promises;
 const axios = require("axios");
-
+const { waifuAPI } = require("./apiRequest");
 async function loadConfig() {
     try {
         if (!global.botConfig) {
@@ -13,9 +13,9 @@ async function loadConfig() {
         console.error("Error loading config:", error);
     }
 }
-async function fetchWaifuData(type, category) {
+async function waifuPics(type, category) {
     try {
-        const url = `https://api.waifu.pics/${type}/${category}`;
+        const url = waifuAPI(type,category);
         const response = await axios.get(url);
         return {
             url: response.data.url,
@@ -82,4 +82,4 @@ async function wiki(argumen, region) {
     }
 }
 
-module.exports = { loadConfig, fetchWaifuData, wiki };
+module.exports = { loadConfig, waifuPics, wiki };

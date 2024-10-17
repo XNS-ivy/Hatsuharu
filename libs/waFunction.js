@@ -1,7 +1,7 @@
 const reply = require("./replyData.json");
 const fs = require("fs");
 const {
-    fetchWaifuData,
+    waifuPics,
     loadConfig,
     wiki
 } = require("./utils");
@@ -86,7 +86,7 @@ async function initialQuery(query, args, id, name) {
                 requireBanner = false;
                 break;
             }
-            const getRandomAnime = await fetchWaifuData(query, args);
+            const getRandomAnime = await waifuPics(query, args);
             media = getRandomAnime.url;
             text = getRandomAnime.text;
             picture = true;
@@ -96,7 +96,7 @@ async function initialQuery(query, args, id, name) {
         case global.config.memberMenu[3]:
             const region = query == global.config.memberMenu[2] ? "en" : "id";
             text = await wiki(args, region);
-        break;
+            break;
         default:
             break;
     }
