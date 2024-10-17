@@ -2,7 +2,8 @@ const reply = require("./replyData.json");
 const fs = require("fs");
 const {
     fetchWaifuData,
-    loadConfig
+    loadConfig,
+    wiki
 } = require("./utils");
 function msgProcess(msg) {
     const getObjectMsg = Object.keys(msg.message)[0] == "senderKeyDistributionMessage" ? Object.keys(msg.message)[2] :
@@ -91,6 +92,11 @@ async function initialQuery(query, args, id, name) {
             picture = true;
             requireBanner = false;
             break;
+        case global.config.memberMenu[2]:
+        case global.config.memberMenu[3]:
+            const region = query == global.config.memberMenu[2] ? "en" : "id";
+            text = await wiki(args, region);
+        break;
         default:
             break;
     }

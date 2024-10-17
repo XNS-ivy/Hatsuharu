@@ -8,7 +8,9 @@
     ],
     "memberMenu": [
         "sfw",
-        "nsfw"
+        "nsfw",
+        "wikien",
+        "wikiid"
     ],
     "premiumMenu": [],
     "adminMenu": [],
