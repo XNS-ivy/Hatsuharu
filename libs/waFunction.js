@@ -1,9 +1,10 @@
 const reply = require("./replyData.json");
 const fs = require("fs");
-const axios = require("axios");
-
+const {
+    fetchWaifuData,
+    loadConfig
+} = require("./utils");
 function msgProcess(msg) {
-    // if(Object.keys(msg.message)[0] == undefined || Object.keys(msg.message)[2] == undefined) return undefined;
     const getObjectMsg = Object.keys(msg.message)[0] == "senderKeyDistributionMessage" ? Object.keys(msg.message)[2] :
         Object.keys(msg.message)[0];
 
@@ -119,21 +120,6 @@ async function initialQuery(query, args, id, name) {
         urlMedia: media,
         urlAudio: audio,
         isPicture: picture,
-    }
-}
-async function fetchWaifuData(type, category) {
-    try {
-        const url = `https://api.waifu.pics/${type}/${category}`;
-        const response = await axios.get(url);
-        return {
-            url: response.data.url,
-            text: ">-<",
-        };
-    } catch (error) {
-        console.log(error);
-        return {
-            text: "Category not found"
-        }
     }
 }
 module.exports = { msgProcess, styleLogging, initialQuery }

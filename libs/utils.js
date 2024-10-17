@@ -1,4 +1,5 @@
 const fs = require("fs").promises;
+const axios = require("axios");
 
 async function loadConfig() {
     try {
@@ -12,5 +13,20 @@ async function loadConfig() {
         console.error("Error loading config:", error);
     }
 }
+async function fetchWaifuData(type, category) {
+    try {
+        const url = `https://api.waifu.pics/${type}/${category}`;
+        const response = await axios.get(url);
+        return {
+            url: response.data.url,
+            text: ">-<",
+        };
+    } catch (error) {
+        console.log(error);
+        return {
+            text: "Category not found"
+        }
+    }
+}
 
-module.exports = { loadConfig };
+module.exports = { loadConfig, fetchWaifuData };
